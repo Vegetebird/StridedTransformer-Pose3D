@@ -7,29 +7,29 @@ class Model(nn.Module):
     def __init__(self, args):
         super().__init__()
 
-        layers, channle, d_hid, length  = args.layers, args.channle, args.d_hid, args.frames
+        layers, channel, d_hid, length  = args.layers, args.channel, args.d_hid, args.frames
         stride_num = args.stride_num
         self.num_joints_in, self.num_joints_out = args.n_joints, args.out_joints
 
         self.encoder = nn.Sequential(
-            nn.Conv1d(2*self.num_joints_in, channle, kernel_size=1),
-            nn.BatchNorm1d(channle, momentum=0.1),
+            nn.Conv1d(2*self.num_joints_in, channel, kernel_size=1),
+            nn.BatchNorm1d(channel, momentum=0.1),
             nn.ReLU(inplace=True),
             nn.Dropout(0.25)
         )
 
-        self.Transformer = Transformer(layers, channle, d_hid, length=length)
-        self.Transformer_reduce = Transformer_reduce(len(stride_num), channle, d_hid, \
+        self.Transformer = Transformer(layers, channel, d_hid, length=length)
+        self.Transformer_reduce = Transformer_reduce(len(stride_num), channel, d_hid, \
             length=length, stride_num=stride_num)
         
         self.fcn = nn.Sequential(
-            nn.BatchNorm1d(channle, momentum=0.1),
-            nn.Conv1d(channle, 3*self.num_joints_out, kernel_size=1)
+            nn.BatchNorm1d(channel, momentum=0.1),
+            nn.Conv1d(channel, 3*self.num_joints_out, kernel_size=1)
         )
 
         self.fcn_1 = nn.Sequential(
-            nn.BatchNorm1d(channle, momentum=0.1),
-            nn.Conv1d(channle, 3*self.num_joints_out, kernel_size=1)
+            nn.BatchNorm1d(channel, momentum=0.1),
+            nn.Conv1d(channel, 3*self.num_joints_out, kernel_size=1)
         )
 
     def forward(self, x):
