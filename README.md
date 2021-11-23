@@ -37,8 +37,7 @@ To test on pretrained model on Human3.6M with 351-frames:
 python main.py --frames 351 --refine --reload 1  --refine_reload 1 --previous_dir 'checkpoint/351'
 ```
 
-Trian the model
---------------------------------------------
+## Train the model
 
 To train on Human3.6M with 351-frame:
 
