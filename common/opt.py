@@ -35,7 +35,7 @@ class opts():
         self.parser.add_argument('--workers', type=int, default=8)
         self.parser.add_argument('-lrd', '--lr_decay', default=0.95, type=float)
         self.parser.add_argument('--frames', type=int, default=351)
-        self.parser.add_argument('--pad', type=int, default=150) 
+        self.parser.add_argument('--pad', type=int, default=175) 
         self.parser.add_argument('--refine', action='store_true')
         self.parser.add_argument('--reload', type=int, default=0)
         self.parser.add_argument('--refine_reload', type=int, default=0)
