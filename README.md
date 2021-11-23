@@ -6,8 +6,7 @@ This repo is the official implementation of [Exploiting Temporal Contexts with S
   <img src="figure/skating.gif" width="49%" />
   <img src="figure/dancing.gif" width="49%" />
 
-Dependencies
-------------
+## Dependencies
 
 - Cuda 11.1
 - Python 3.6
