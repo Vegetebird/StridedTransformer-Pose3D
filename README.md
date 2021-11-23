@@ -25,7 +25,7 @@ ${POSE_ROOT}/
 |   |-- data_2d_h36m_cpn_ft_h36m_dbb.npz
 ```
 
-### Download pretrained model
+## Download pretrained model
 
 The pretrained model can be found in [Google_Drive](https://drive.google.com/drive/folders/1JszQxruPFqux3UzXcJWKgsB67wPk__dH?usp=sharing), please download it and put in the './checkpoint' dictory. 
 
@@ -63,7 +63,7 @@ If you find our work useful in your research, please consider citing:
       year={2021}
     }
 
-### Acknowledgement
+## Acknowledgement
 
 Our code is built on top of [ST-GCN](https://github.com/vanoracai/Exploiting-Spatial-temporal-Relationships-for-3D-Pose-Estimation-via-Graph-Convolutional-Networks) and is extended from the following repositories. We thank the authors for releasing the codes. 
 
