@@ -1,3 +1,10 @@
-### Download pretrained model
+## Dataset setup
 
-The pretrained model can be found in [Google_Drive](https://drive.google.com/drive/folders/1JszQxruPFqux3UzXcJWKgsB67wPk__dH?usp=sharing), please download it and put in the './checkpoint' dictory. 
+Please download the dataset from [Human3.6m](http://vision.imar.ro/human3.6m/) website and refer to [VideoPose3D](https://github.com/facebookresearch/VideoPose3D) to set up the Human3.6M dataset ('./dataset' directory). 
+
+```bash
+${POSE_ROOT}/
+|-- Dataset
+|   |-- data_3d_h36m.npz
+|   |-- data_2d_h36m_gt.npz
+|   |-- data_2d_h36m_cpn_ft_h36m_dbb.npz
