@@ -54,9 +54,6 @@ class Fusion(data.Dataset):
                 for cam in anim['cameras']:
                     pos_3d = world_to_camera(anim['positions'], R=cam['orientation'], t=cam['translation'])
                     pos_3d[:, 1:] -= pos_3d[:, :1] 
-                    
-                    if self.keypoints_name.startswith('sh'):
-                        pos_3d = np.delete(pos_3d,obj=9,axis=1)
                     positions_3d.append(pos_3d)
                 anim['positions_3d'] = positions_3d
 
