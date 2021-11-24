@@ -32,7 +32,7 @@ The pretrained model can be found in [Google_Drive](https://drive.google.com/dri
 To test on pretrained model on Human3.6M:
 
 ```bash
-python main.py --refine --reload 1  --refine_reload 1 --previous_dir 'checkpoint/model'
+python main.py --refine --reload 1  --refine_reload 1 --previous_dir 'checkpoint/pretrained'
 ```
 
 ## Train the model
