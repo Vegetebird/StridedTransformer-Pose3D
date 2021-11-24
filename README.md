@@ -29,24 +29,24 @@ The pretrained model can be found in [Google_Drive](https://drive.google.com/dri
 
 ## Test the model
 
-To test on pretrained model on Human3.6M with 351-frames:
+To test on pretrained model on Human3.6M:
 
 ```bash
-python main.py --frames 351 --refine --reload 1  --refine_reload 1 --previous_dir 'checkpoint/351'
+python main.py --refine --reload 1  --refine_reload 1 --previous_dir 'checkpoint/model'
 ```
 
 ## Train the model
 
-To train on Human3.6M with 351-frame:
+To train on Human3.6M:
 
 ```bash
-python main.py --frames 351 --train 1 \
+python main.py --train 1 \
 ```
 
 After training for several epoches, add refine module
 
 ```bash
-python main.py --frames 351 --train 1 --refine --lr 1e-5 --reload 1 --previous_dir [your model saved path] \
+python main.py --train 1 --refine --lr 1e-5 --reload 1 --previous_dir [your model saved path] \
 ```
 
 ## Citation
