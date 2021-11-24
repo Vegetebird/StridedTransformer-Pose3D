@@ -108,20 +108,20 @@ def print_error_action(action_error_sum, is_train):
     mean_error_each = 0.0
     mean_error_all = AccumLoss()
 
-    if is_train == 0:
+    if not is_train:
         print("{0:=^12} {1:=^10}".format("Action", "MPJPE"))
 
     for action, value in action_error_sum.items():
-        if is_train == 0:
+        if not is_train:
             print("{0:<12} ".format(action), end="")
             
         mean_error_each = action_error_sum[action].avg * 1000.0
         mean_error_all.update(mean_error_each, 1)
 
-        if is_train == 0:
+        if not is_train:
             print("{0:>7.2f}".format(mean_error_each))
 
-    if is_train == 0:
+    if not is_train:
         print("{0:<12} {1:>7.2f}".format("Average", mean_error_all.avg))
     
     return mean_error_all.avg

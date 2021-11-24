@@ -157,7 +157,7 @@ if __name__ == '__main__':
     random.seed(opt.manualSeed)
     torch.manual_seed(opt.manualSeed)
 
-    if opt.train == 1:
+    if opt.train:
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S', \
                             filename=os.path.join(opt.checkpoint, 'train.log'), level=logging.INFO)
             
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     model['refine']= refine(opt).cuda()
 
     model_dict = model['trans'].state_dict()
-    if opt.reload == 1:
+    if opt.reload:
         model_path = sorted(glob.glob(os.path.join(opt.previous_dir, '*.pth')))
         
         refine_path = []
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         model['trans'].load_state_dict(model_dict)
 
     refine_dict = model['refine'].state_dict()
-    if opt.refine_reload == 1:
+    if opt.refine_reload:
         model_path = sorted(glob.glob(os.path.join(opt.previous_dir, '*.pth')))
 
         refine_path = []
@@ -221,10 +221,10 @@ if __name__ == '__main__':
     optimizer_all = optim.Adam(all_param, lr=opt.lr, amsgrad=True)
 
     for epoch in range(1, opt.nepoch):
-        if opt.train == 1: 
+        if opt.train: 
             loss, error = train(opt, actions, train_dataloader, model, optimizer_all, epoch)
         
-        if opt.test == 1:
+        if opt.test:
             mpjpe = val(opt, actions, test_dataloader, model)
             data_threshold = mpjpe
 
@@ -236,7 +236,7 @@ if __name__ == '__main__':
                                                           data_threshold, model['refine'], 'refine')
                 opt.previous_best_threshold = data_threshold
 
-            if opt.train == 0:
+            if not opt.train:
                 print('mpjpe: %.2f' % (mpjpe))
                 break
             else:
