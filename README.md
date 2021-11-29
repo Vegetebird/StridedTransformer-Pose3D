@@ -69,3 +69,6 @@ Our code is built on top of [ST-GCN](https://github.com/vanoracai/Exploiting-Spa
 - [VideoPose3D](https://github.com/facebookresearch/VideoPose3D)
 - [ST-GCN](https://github.com/vanoracai/Exploiting-Spatial-temporal-Relationships-for-3D-Pose-Estimation-via-Graph-Convolutional-Networks)
 
+## Licence
+
+This project is licensed under the terms of the MIT license.
