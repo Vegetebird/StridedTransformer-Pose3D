@@ -1,6 +1,9 @@
 # Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation
 
-This repo is the official implementation of [Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation](https://arxiv.org/pdf/2103.14304) in Pytorch.
+
+This is the official implementation of the approach described in the paper:
+
+> Wenhao Li, Hong Liu, Runwei Ding, Mengyuan Liu, Pichao Wang, and Wenming Yang. [Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation](https://arxiv.org/pdf/2103.14304). IEEE Transactions on Multimedia, 2022.
 
 <p float="left">
   <img src="figure/skating.gif" width="49%" />
@@ -53,11 +56,11 @@ python main.py --train --refine --lr 1e-5 --reload --previous_dir [your model sa
 
 If you find our work useful in your research, please consider citing:
 
-    @article{li2021exploiting,
-      title={Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation},
+    @article{li2022exploiting,
+      title={Exploiting temporal contexts with strided transformer for 3d human pose estimation},
       author={Li, Wenhao and Liu, Hong and Ding, Runwei and Liu, Mengyuan and Wang, Pichao and Yang, Wenming},
-      journal={arXiv preprint arXiv:2103.14304},
-      year={2021}
+      journal={IEEE Transactions on Multimedia},
+      year={2022},
     }
 
 ## Acknowledgement
