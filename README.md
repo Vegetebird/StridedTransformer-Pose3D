@@ -5,6 +5,9 @@ This is the official implementation of the approach described in the paper:
 
 > Wenhao Li, Hong Liu, Runwei Ding, Mengyuan Liu, Pichao Wang, and Wenming Yang. [Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation](https://arxiv.org/pdf/2103.14304). IEEE Transactions on Multimedia, 2022.
 
+![News](https://img.shields.io/badge/-News!-red) Recently, our method has been verified in [self-supervised pre-training](https://arxiv.org/pdf/2203.07628.pdf) as a backbone network! 
+
+
 <p float="left">
   <img src="figure/skating.gif" width="49%" />
   <img src="figure/dancing.gif" width="49%" />
