@@ -38,23 +38,20 @@ def step(split, opt, actions, dataLoader, model, optimizer=None, epoch=None):
         model_refine.eval()
 
     loss_all = {'loss': AccumLoss()}
-    error_sum = AccumLoss()
-
     action_error_sum = define_error_list(actions)
-    action_error_sum_post_out = define_error_list(actions)
-
-    joints_left = [4, 5, 6, 11, 12, 13]  
-    joints_right = [1, 2, 3, 14, 15, 16]
+    action_error_sum_refine = define_error_list(actions)
 
     for i, data in enumerate(tqdm(dataLoader, 0)):
         batch_cam, gt_3D, input_2D, action, subject, scale, bb_box, cam_ind = data
         [input_2D, gt_3D, batch_cam, scale, bb_box] = get_varialbe(split, [input_2D, gt_3D, batch_cam, scale, bb_box])
-        
-        N = input_2D.size(0)
 
-        out_target = gt_3D.clone().view(N, -1, opt.out_joints, opt.out_channels)
+        if split =='train':
+            output_3D, output_3D_VTE = model_trans(input_2D) 
+        else:
+            input_2D, output_3D, output_3D_VTE = input_augmentation(input_2D, model_trans)
+
+        out_target = gt_3D.clone()
         out_target[:, :, 0] = 0
-        gt_3D = gt_3D.view(N, -1, opt.out_joints, opt.out_channels).type(torch.cuda.FloatTensor)
 
         if out_target.size(1) > 1:
             out_target_single = out_target[:, opt.pad].unsqueeze(1)
@@ -63,90 +60,63 @@ def step(split, opt, actions, dataLoader, model, optimizer=None, epoch=None):
             out_target_single = out_target
             gt_3D_single = gt_3D
 
-        if opt.test_augmentation and split =='test':
-            input_2D, output_3D, output_3D_VTE = input_augmentation(input_2D, model_trans, joints_left, joints_right)
-        else:
-            input_2D = input_2D.view(N, -1, opt.n_joints, opt.in_channels, 1).permute(0, 3, 1, 2, 4).type(torch.cuda.FloatTensor) 
-            output_3D, output_3D_VTE = model_trans(input_2D) 
-
-        output_3D_VTE = output_3D_VTE.permute(0, 2, 3, 4, 1).contiguous().view(N, -1, opt.out_joints, opt.out_channels)
-        output_3D = output_3D.permute(0, 2, 3, 4, 1).contiguous().view(N, -1, opt.out_joints, opt.out_channels)
-        
-        output_3D_VTE = output_3D_VTE * scale.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).repeat(1, output_3D_VTE.size(1),opt.out_joints, opt.out_channels) 
-        output_3D = output_3D * scale.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).repeat(1, output_3D.size(1),opt.out_joints, opt.out_channels) 
-        output_3D_single = output_3D
-
-        if split == 'train':
-            pred_out = output_3D_VTE 
-
-        elif split == 'test':
-            pred_out = output_3D_single
-
-        input_2D = input_2D.permute(0, 2, 3, 1, 4).view(N, -1, opt.n_joints ,2)
-
         if opt.refine:
-            pred_uv = input_2D
-            uvd = torch.cat((pred_uv[:, opt.pad, :, :].unsqueeze(1), output_3D_single[:, :, :, 2].unsqueeze(-1)), -1)
+            pred_uv = input_2D[:, opt.pad, :, :].unsqueeze(1)
+            uvd = torch.cat((pred_uv, output_3D[:, :, :, 2].unsqueeze(-1)), -1)
             xyz = get_uvd2xyz(uvd, gt_3D_single, batch_cam) 
             xyz[:, :, 0, :] = 0
-            post_out = model_refine(output_3D_single, xyz) 
-            loss = mpjpe_cal(post_out, out_target_single)
-        else:
-            loss = mpjpe_cal(pred_out, out_target) + mpjpe_cal(output_3D_single, out_target_single)
-
-        loss_all['loss'].update(loss.detach().cpu().numpy() * N, N)
+            output_3D = model_refine(output_3D, xyz) 
 
         if split == 'train':
+            if opt.refine:
+                loss = mpjpe_cal(output_3D, out_target_single)
+            else:
+                loss = mpjpe_cal(output_3D_VTE, out_target) + mpjpe_cal(output_3D, out_target_single)
+
+                N = input_2D.size(0)
+                loss_all['loss'].update(loss.detach().cpu().numpy() * N, N)
+
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-            if opt.refine:
-                post_out[:,:,0,:] = 0
-                joint_error = mpjpe_cal(post_out, out_target_single).item()
-            else:
-                pred_out[:,:,0,:] = 0
-                joint_error = mpjpe_cal(pred_out, out_target).item()
-                
-            error_sum.update(joint_error*N, N)
-
         elif split == 'test':
-            pred_out[:, :, 0, :] = 0
-            action_error_sum = test_calculation(pred_out, out_target, action, action_error_sum, opt.dataset, subject)
+            output_3D[:, :, 0, :] = 0
+            action_error_sum = test_calculation(output_3D, out_target, action, action_error_sum, opt.dataset, subject)
             
             if opt.refine:
-                post_out[:, :, 0, :] = 0
-                action_error_sum_post_out = test_calculation(post_out, out_target, action, action_error_sum_post_out, opt.dataset, subject)
+                output_3D[:, :, 0, :] = 0
+                action_error_sum_refine = test_calculation(output_3D, out_target, action, action_error_sum_refine, opt.dataset, subject)
 
     if split == 'train':
-        return loss_all['loss'].avg, error_sum.avg*1000
+        return loss_all['loss'].avg
     elif split == 'test':
         if opt.refine:
-            mpjpe = print_error(opt.dataset, action_error_sum_post_out, opt.train)
+            p1, p2 = print_error(opt.dataset, action_error_sum_refine, opt.train)
         else:
-            mpjpe = print_error(opt.dataset, action_error_sum, opt.train)
+            p1, p2 = print_error(opt.dataset, action_error_sum, opt.train)
 
-        return mpjpe
+        return p1, p2
 
-def input_augmentation(input_2D, model_trans, joints_left, joints_right):
-    N, _, T, J, C = input_2D.shape 
+def input_augmentation(input_2D, model_trans):
+    joints_left = [4, 5, 6, 11, 12, 13]  
+    joints_right = [1, 2, 3, 14, 15, 16]
 
-    input_2D_flip = input_2D[:, 1].view(N, T, J, C, 1).permute(0, 3, 1, 2, 4)   
-    input_2D_non_flip = input_2D[:, 0].view(N, T, J, C, 1).permute(0, 3, 1, 2, 4) 
-
-    output_3D_flip, output_3D_flip_VTE = model_trans(input_2D_flip)
-
-    output_3D_flip_VTE[:, 0] *= -1 
-    output_3D_flip[:, 0] *= -1 
-
-    output_3D_flip_VTE[:, :, :, joints_left + joints_right] = output_3D_flip_VTE[:, :, :, joints_right + joints_left] 
-    output_3D_flip[:, :, :, joints_left + joints_right] = output_3D_flip[:, :, :, joints_right + joints_left] 
+    input_2D_non_flip = input_2D[:, 0]
+    input_2D_flip = input_2D[:, 1]
 
     output_3D_non_flip, output_3D_non_flip_VTE = model_trans(input_2D_non_flip)
+    output_3D_flip, output_3D_flip_VTE         = model_trans(input_2D_flip)
+
+    output_3D_flip_VTE[:, :, :, 0] *= -1 
+    output_3D_flip[:, :, :, 0] *= -1 
+
+    output_3D_flip_VTE[:, :, joints_left + joints_right, :] = output_3D_flip_VTE[:, :, joints_right + joints_left, :] 
+    output_3D_flip[:, :, joints_left + joints_right, :] = output_3D_flip[:, :, joints_right + joints_left, :] 
 
     output_3D_VTE = (output_3D_non_flip_VTE + output_3D_flip_VTE) / 2
     output_3D = (output_3D_non_flip + output_3D_flip) / 2
-
+    
     input_2D = input_2D_non_flip
 
     return input_2D, output_3D, output_3D_VTE
@@ -171,10 +141,10 @@ if __name__ == '__main__':
         train_data = Fusion(opt=opt, train=True, dataset=dataset, root_path=root_path)
         train_dataloader = torch.utils.data.DataLoader(train_data, batch_size=opt.batch_size,
                                                        shuffle=True, num_workers=int(opt.workers), pin_memory=True)
-    if opt.test:
-        test_data = Fusion(opt=opt, train=False,dataset=dataset, root_path =root_path)
-        test_dataloader = torch.utils.data.DataLoader(test_data, batch_size=opt.batch_size,
-                                                      shuffle=False, num_workers=int(opt.workers), pin_memory=True)
+
+    test_data = Fusion(opt=opt, train=False,dataset=dataset, root_path =root_path)
+    test_dataloader = torch.utils.data.DataLoader(test_data, batch_size=opt.batch_size,
+                                                  shuffle=False, num_workers=int(opt.workers), pin_memory=True)
 
     opt.out_joints = dataset.skeleton().num_joints()
 
@@ -222,26 +192,24 @@ if __name__ == '__main__':
 
     for epoch in range(1, opt.nepoch):
         if opt.train: 
-            loss, error = train(opt, actions, train_dataloader, model, optimizer_all, epoch)
+            loss = train(opt, actions, train_dataloader, model, optimizer_all, epoch)
         
-        if opt.test:
-            mpjpe = val(opt, actions, test_dataloader, model)
-            data_threshold = mpjpe
+        p1, p2 = val(opt, actions, test_dataloader, model)
 
-            if opt.train and data_threshold < opt.previous_best_threshold:
-                opt.previous_name = save_model(opt.previous_name, opt.checkpoint, epoch, data_threshold, model['trans'], 'no_refine')
+        if opt.train and p1 < opt.previous_best_threshold:
+            opt.previous_name = save_model(opt.previous_name, opt.checkpoint, epoch, p1, model['trans'], 'no_refine')
 
-                if opt.refine:
-                    opt.previous_refine_name = save_model(opt.previous_refine_name, opt.checkpoint, epoch,
-                                                          data_threshold, model['refine'], 'refine')
-                opt.previous_best_threshold = data_threshold
+            if opt.refine:
+                opt.previous_refine_name = save_model(opt.previous_refine_name, opt.checkpoint, epoch,
+                                                      p1, model['refine'], 'refine')
+            opt.previous_best_threshold = p1
 
-            if not opt.train:
-                print('mpjpe: %.2f' % (mpjpe))
-                break
-            else:
-                logging.info('epoch: %d, lr: %.7f, loss: %.4f, mpjpe: %.2f' % (epoch, lr, loss, mpjpe))
-                print('e: %d, lr: %.7f, loss: %.4f, mpjpe: %.2f' % (epoch, lr, loss, mpjpe))
+        if not opt.train:
+            print('p1: %.2f, p2: %.2f' % (p1, p2))
+            break
+        else:
+            logging.info('epoch: %d, lr: %.7f, loss: %.4f, p1: %.2f, p2: %.2f' % (epoch, lr, loss, p1, p2))
+            print('e: %d, lr: %.7f, loss: %.4f, p1: %.2f, p2: %.2f' % (epoch, lr, loss, p1, p2))
 
         if epoch % opt.large_decay_epoch == 0: 
             for param_group in optimizer_all.param_groups:
@@ -251,9 +219,6 @@ if __name__ == '__main__':
             for param_group in optimizer_all.param_groups:
                 param_group['lr'] *= opt.lr_decay
                 lr *= opt.lr_decay
-
-
-
 
 
 
