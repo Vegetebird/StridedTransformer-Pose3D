@@ -196,7 +196,7 @@ def print_error_action(action_error_sum, is_train):
     return mean_error_all['p1'].avg, mean_error_all['p2'].avg
 
 
-def save_model(previous_name, save_dir,epoch, data_threshold, model, model_name):
+def save_model(previous_name, save_dir, epoch, data_threshold, model, model_name):
     if os.path.exists(previous_name):
         os.remove(previous_name)
 
@@ -207,7 +207,8 @@ def save_model(previous_name, save_dir,epoch, data_threshold, model, model_name)
     return previous_name
     
 
-
+def save_model_epoch(save_dir, epoch, model, model_name):
+    torch.save(model.state_dict(), '%s/epoch_%s_%d.pth' % (save_dir, model_name, epoch))
 
 
 
