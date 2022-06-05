@@ -196,11 +196,8 @@ if __name__ == '__main__':
         
         p1, p2 = val(opt, actions, test_dataloader, model)
 
-        if opt.train:
+        if opt.train and not opt.refine:
             save_model_epoch(opt.checkpoint, epoch, model['trans'], 'no_refine')
-
-            if opt.refine:
-                save_model_epoch(opt.checkpoint, epoch, model['refine'], 'refine')
 
         if opt.train and p1 < opt.previous_best_threshold:
             opt.previous_name = save_model(opt.previous_name, opt.checkpoint, epoch, p1, model['trans'], 'no_refine')
