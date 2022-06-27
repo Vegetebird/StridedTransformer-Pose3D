@@ -11,7 +11,7 @@ This is the official implementation of the approach described in the paper:
 
 
 ## News
--  03/24/2022: Demo and in-the-wild inference code is released!
+-  03/24/2022: Demo and in-the-wild inference code are released!
 - 03/15/2022: Our method has been verified in [self-supervised pre-training](https://arxiv.org/pdf/2203.07628.pdf) as a backbone network! 
 
 
@@ -78,7 +78,7 @@ Sample demo output:
 If you find our work useful in your research, please consider citing:
 
     @article{li2022exploiting,
-      title={Exploiting temporal contexts with strided transformer for 3d human pose estimation},
+      title={Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation},
       author={Li, Wenhao and Liu, Hong and Ding, Runwei and Liu, Mengyuan and Wang, Pichao and Yang, Wenming},
       journal={IEEE Transactions on Multimedia},
       year={2022},
