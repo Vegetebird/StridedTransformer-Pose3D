@@ -1,6 +1,6 @@
 ## Download pretrained model
 
-The pretrained model can be found in [here](https://drive.google.com/drive/folders/1JszQxruPFqux3UzXcJWKgsB67wPk__dH?usp=sharing), please download it and put in the './checkpoint' dictory. 
+The pretrained model can be found in [here](https://drive.google.com/drive/folders/1JszQxruPFqux3UzXcJWKgsB67wPk__dH?usp=sharing), please download it and put in the './checkpoint/pretrained' dictory. 
 
 ## Test the model
 
