@@ -73,8 +73,8 @@ def step(split, opt, actions, dataLoader, model, optimizer=None, epoch=None):
             else:
                 loss = mpjpe_cal(output_3D_VTE, out_target) + mpjpe_cal(output_3D, out_target_single)
 
-                N = input_2D.size(0)
-                loss_all['loss'].update(loss.detach().cpu().numpy() * N, N)
+            N = input_2D.size(0)
+            loss_all['loss'].update(loss.detach().cpu().numpy() * N, N)
 
             optimizer.zero_grad()
             loss.backward()
