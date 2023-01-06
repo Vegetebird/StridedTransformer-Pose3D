@@ -36,7 +36,7 @@ ${POSE_ROOT}/
 
 ## Download pretrained model
 
-The pretrained model can be found in [here](https://drive.google.com/drive/folders/13p62U_f5Z5Ay2jyRlXDkeU7tccde8DxS?usp=sharing), please download it and put in the './checkpoint/pretrained' dictory. 
+The pretrained model can be found in [here](https://drive.google.com/drive/folders/13p62U_f5Z5Ay2jyRlXDkeU7tccde8DxS?usp=sharing), please download it and put in the './checkpoint/pretrained' directory. 
 
 ## Test the model
 
