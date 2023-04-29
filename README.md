@@ -77,12 +77,15 @@ Sample demo output:
 
 If you find our work useful in your research, please consider citing:
 
-    @article{li2022exploiting,
+    @article{li2023exploiting,
       title={Exploiting Temporal Contexts with Strided Transformer for 3D Human Pose Estimation},
       author={Li, Wenhao and Liu, Hong and Ding, Runwei and Liu, Mengyuan and Wang, Pichao and Yang, Wenming},
       journal={IEEE Transactions on Multimedia},
       year={2022},
+      volume={25},
+      pages={1282-1293},
     }
+
 
 ## Acknowledgement
 
