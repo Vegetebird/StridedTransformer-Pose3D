@@ -16,9 +16,7 @@ This is the official implementation of the approach described in the paper:
 
 
 ## Dependencies
-
-- Cuda 11.1
-- Python 3.6
+- Python 3.9
 - Pytorch 1.7.1
 
 ## Dataset setup
