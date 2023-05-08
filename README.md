@@ -16,7 +16,7 @@ This is the official implementation of the approach described in the paper:
 
 
 ## Dependencies
-- Python 3.9
+- Python 3.7
 - Pytorch 1.7.1
 
 ## Dataset setup
