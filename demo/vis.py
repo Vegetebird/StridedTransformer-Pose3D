@@ -65,7 +65,7 @@ def show3Dpose(vals, ax):
 
     ax.set_xlim3d([-RADIUS, RADIUS])
     ax.set_ylim3d([-RADIUS, RADIUS])
-    ax.set_aspect('equal') # works fine in matplotlib==2.2.2
+    ax.set_aspect('equal') # works fine in matplotlib==2.2.2 or 3.7.1
 
     white = (1.0, 1.0, 1.0, 0.0)
     ax.xaxis.set_pane_color(white) 
@@ -135,7 +135,7 @@ def get_pose3D(video_path, output_dir):
     model_dict = model.state_dict()
     model_paths = sorted(glob.glob(os.path.join(args.previous_dir, '*.pth')))
     for path in model_paths:
-        if path.split('/')[-1][0] == 'n':
+        if os.path.split(path)[-1][0] == 'n':
             model_path = path
 
     pre_dict = torch.load(model_path)
@@ -153,6 +153,7 @@ def get_pose3D(video_path, output_dir):
 
     ## 3D
     print('\nGenerating 3D pose...')
+    output_3d_all = []
     for i in tqdm(range(video_length)):
         ret, img = cap.read()
         img_size = img.shape
@@ -200,6 +201,8 @@ def get_pose3D(video_path, output_dir):
         output_3D[:, :, 0, :] = 0
         post_out = output_3D[0, 0].cpu().detach().numpy()
 
+        output_3d_all.append(post_out)
+
         rot =  [0.1407056450843811, -0.1500701755285263, -0.755240797996521, 0.6223280429840088]
         rot = np.array(rot, dtype='float32')
         post_out = camera_to_world(post_out, R=rot, t=0)
@@ -224,6 +227,12 @@ def get_pose3D(video_path, output_dir):
         output_dir_3D = output_dir +'pose3D/'
         os.makedirs(output_dir_3D, exist_ok=True)
         plt.savefig(output_dir_3D + str(('%04d'% i)) + '_3D.png', dpi=200, format='png', bbox_inches = 'tight')
+
+    ## save 3D keypoints
+    output_3d_all = np.stack(output_3d_all, axis = 0)
+    os.makedirs(output_dir + 'output_3D/', exist_ok=True)
+    output_npz = output_dir + 'output_3D/' + 'output_keypoints_3d.npz'
+    np.savez_compressed(output_npz, reconstruction=output_3d_all)
         
     print('Generating 3D pose successful!')
 
@@ -241,7 +250,7 @@ def get_pose3D(video_path, output_dir):
         edge = (image_2d.shape[1] - image_2d.shape[0]) // 2
         image_2d = image_2d[:, edge:image_2d.shape[1] - edge]
 
-        edge = 130
+        edge = 102
         image_3d = image_3d[edge:image_3d.shape[0] - edge, edge:image_3d.shape[1] - edge]
 
         ## show

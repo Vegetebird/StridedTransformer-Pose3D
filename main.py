@@ -157,7 +157,7 @@ if __name__ == '__main__':
         model_path = sorted(glob.glob(os.path.join(opt.previous_dir, '*.pth')))
         
         for path in model_path:
-            if path.split('/')[-1][0] == 'n':
+            if os.path.split(path)[-1][0] == 'n':
                 no_refine_path = path
                 print(no_refine_path)
                 break
@@ -172,7 +172,7 @@ if __name__ == '__main__':
         model_path = sorted(glob.glob(os.path.join(opt.previous_dir, '*.pth')))
 
         for path in model_path:
-            if path.split('/')[-1][0] == 'r':
+            if os.path.split(path)[-1][0] == 'r':
                 refine_path = path
                 print(refine_path)
                 break

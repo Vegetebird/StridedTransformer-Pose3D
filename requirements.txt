@@ -1,0 +1,14 @@
+numpy
+einops
+timm
+matplotlib==3.7.1
+tqdm
+yacs
+numba
+filterpy
+scikit-image
+opencv-python
+ipython
+
+
+

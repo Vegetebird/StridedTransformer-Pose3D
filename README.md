@@ -15,9 +15,10 @@ This is the official implementation of the approach described in the paper:
 - 03/15/2022: Our method has been verified in [self-supervised pre-training](https://arxiv.org/pdf/2203.07628.pdf) as a backbone network! 
 
 
-## Dependencies
-- Python 3.7
-- Pytorch 1.7.1
+## Installation
+Our code is tested on Ubuntu 18 with Pytorch 1.7.1 and Python 3.9. 
+- Install PyTorch 1.7.1 and Torchvision 0.8.2 following the [official instructions](https://pytorch.org/)
+- ```pip3 install -r requirements.txt```
 
 ## Dataset setup
 
