@@ -61,10 +61,13 @@ def show3Dpose(vals, ax):
         ax.plot(x, y, z, lw=2)
         ax.scatter(x, y, z)
 
-    RADIUS = 0.8
+    RADIUS = 0.72
+    RADIUS_Z = 0.7
 
-    ax.set_xlim3d([-RADIUS, RADIUS])
-    ax.set_ylim3d([-RADIUS, RADIUS])
+    xroot, yroot, zroot = vals[0,0], vals[0,1], vals[0,2]
+    ax.set_xlim3d([-RADIUS+xroot, RADIUS+xroot])
+    ax.set_ylim3d([-RADIUS+yroot, RADIUS+yroot])
+    ax.set_zlim3d([-RADIUS_Z+zroot, RADIUS_Z+zroot])
     ax.set_aspect('equal') # works fine in matplotlib==2.2.2 or 3.7.1
 
     white = (1.0, 1.0, 1.0, 0.0)
