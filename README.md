@@ -11,8 +11,7 @@ This is the official implementation of the approach described in the paper:
 
 
 ## News
--  03/24/2022: Demo and in-the-wild inference code are released!
-- 03/15/2022: Our method has been verified in [self-supervised pre-training](https://arxiv.org/pdf/2203.07628.pdf) as a backbone network! 
+- Our method has been verified in [self-supervised pre-training](https://arxiv.org/pdf/2203.07628.pdf) as a backbone network! 
 
 
 ## Installation
