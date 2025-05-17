@@ -230,7 +230,8 @@ def get_pose3D(video_path, output_dir):
         output_dir_3D = output_dir +'pose3D/'
         os.makedirs(output_dir_3D, exist_ok=True)
         plt.savefig(output_dir_3D + str(('%04d'% i)) + '_3D.png', dpi=200, format='png', bbox_inches = 'tight')
-
+        plt.close(fig)
+        
     ## save 3D keypoints
     output_3d_all = np.stack(output_3d_all, axis = 0)
     os.makedirs(output_dir + 'output_3D/', exist_ok=True)
@@ -271,7 +272,8 @@ def get_pose3D(video_path, output_dir):
         output_dir_pose = output_dir +'pose/'
         os.makedirs(output_dir_pose, exist_ok=True)
         plt.savefig(output_dir_pose + str(('%04d'% i)) + '_pose.png', dpi=200, bbox_inches = 'tight')
-
+        plt.close(fig)
+        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--video', type=str, default='sample_video.mp4', help='input video')
